@@ -626,10 +626,12 @@
                 const response = await fetch(`${API_BASE_URL}/predicted-team?gw=${gw}`);
                 const data = await response.json();
                 if (response.ok) {
-                    predictedTeamTotals.innerHTML = `
-                        <h4 class="font-semibold text-lg">Total Cost: <span class="text-green-400">£${data.totals.cost}m</span></h4>
-                        <h4 class="font-semibold text-lg">Predicted XI Points: <span class="text-green-400">${data.totals.predicted_points.toFixed(2)}</span></h4>
-                    `;
+                    if (data && data.totals) {
+                        predictedTeamTotals.innerHTML = `
+                        <h4 class="font-semibold text-lg">Total Cost: <span class="text-green-400">£${data.totals.cost.toFixed(1)}m</span></h4>
+                        <h4 class="font-semibold text-lg">Predicted Points: <span class="text-green-400">${data.totals.predicted_points.toFixed(2)}</span></h4>
+                        `;
+                }
                     
                     // --- CAPTAINCY LOGIC ---
                     const activePlayers = data.team.filter(p => p.status === 'Active');
@@ -784,7 +786,7 @@
             
             // Add non-stat-card fetches
             promises.push(fetchAndRenderPredictedTeam());
-            promises.push(fetchAndRenderFDR());
+            // promises.push(fetchAndRenderFDR());
 
             const results = await Promise.all(promises);
 
